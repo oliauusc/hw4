@@ -93,6 +93,7 @@ std::pair<const Key, Value>& Node<Key, Value>::getItem()
     return item_;
 }
 
+
 /**
 * A const getter for the key.
 */
@@ -251,6 +252,9 @@ protected:
     virtual void nodeSwap( Node<Key,Value>* n1, Node<Key,Value>* n2) ;
 
     // Add helper functions here
+    int getHeight(Node<Key, Value> *curr) const;
+
+
 
 
 protected:
@@ -401,6 +405,18 @@ void BinarySearchTree<Key, Value>::print() const
     printRoot(root_);
 }
 
+// template<typename Key, typename Value>
+// Node<Key, Value>* BinarySearchTree<Key, Value>::getRoot() const
+// {
+//   return root_;
+// }
+
+// template<typename Key, typename Value>
+// void BinarySearchTree<Key, Value>::setRoot(Node<Key, Value>* newRoot)
+// {
+//    root_ = newRoot;
+// }
+
 /**
 * Returns an iterator to the "smallest" item in the tree
 */
@@ -493,7 +509,6 @@ void BinarySearchTree<Key, Value>::insert(const std::pair<const Key, Value> &key
   Node<Key, Value> *newNode = new Node<Key, Value>(k, val, nullptr);
   if (k < prev->getKey()) {
       prev->setLeft(newNode);
-      
     }
   else if (k > prev->getKey()) {
       prev->setRight(newNode);
@@ -632,10 +647,13 @@ void BinarySearchTree<Key, Value>::clear()
 {
     // TODO
     std::queue<Node<Key, Value>*> nodeQueue;
-    nodeQueue.push(root_);
+    // nodeQueue.push(root_);
+    Node<Key, Value>* curr = nullptr;
+
+    if (root_ != nullptr) nodeQueue.push(root_);
 
     while (!(nodeQueue.empty())) {
-      Node<Key, Value>* curr = nodeQueue.front();
+      curr = nodeQueue.front();
       nodeQueue.pop();
 
       if (curr->getRight()) nodeQueue.push(curr->getRight());
@@ -698,6 +716,18 @@ bool BinarySearchTree<Key, Value>::isBalanced() const
   else if (checkLength(root_, 0)!= -1)
     return true;
   else return false;
+}
+
+template<typename Key, typename Value>
+int BinarySearchTree<Key, Value>::getHeight(Node<Key, Value> *curr) const {
+  if (!curr) return 0;
+  
+  // std::cout << "Checking node: " << curr << std::endl;
+
+  int leftHeight = getHeight(curr->getLeft());
+  int rightHeight = getHeight(curr->getRight());
+
+  return std::max(leftHeight, rightHeight) + 1;
 }
 
 template<typename Key, typename Value>
